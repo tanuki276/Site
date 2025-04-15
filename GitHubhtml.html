@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>アンケート</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="container">
+    <h1>アンケート</h1>
+    <form id="surveyForm">
+      <label for="name">名前（本名を入力しないでください）</label>
+      <input type="text" id="name" required />
+
+      <label for="game">好きなゲーム</label>
+      <input type="text" id="game" required />
+
+      <button type="submit">送信</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
