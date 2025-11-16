@@ -1,27 +1,165 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>アンケート</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アンケート</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f0f4ff, #d9e8ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    background: #ffffff;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    max-width: 450px;
+    width: 100%;
+  }
+
+  h1 {
+    text-align: center;
+    color: #1a202c;
+    margin-bottom: 30px;
+  }
+
+  .info-box {
+    background: #fff3cd;
+    color: #856404;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    word-break: break-all;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    transition: border 0.3s;
+  }
+
+  input:focus {
+    border-color: #5c9eff;
+    outline: none;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #4cafef, #007bff);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  button:hover {
+    background: linear-gradient(90deg, #007bff, #4cafef);
+    transform: translateY(-2px);
+  }
+
+  .message {
+    text-align: center;
+    font-weight: 600;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .success {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .error {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+</style>
 </head>
 <body>
-
   <div class="container">
     <h1>アンケート</h1>
-    <form id="surveyForm">
-      <label for="name">名前（本名を入力しないでください）</label>
-      <input type="text" id="name" required />
+    <div class="info-box">
+      Target: <code id="api-url">https://wrapperssss.vercel.app/api/character</code>
+    </div>
+    <form id="form">
+      <label for="name">好きな名前:</label>
+      <input type="text" id="name" required>
 
-      <label for="game">好きなゲーム</label>
-      <input type="text" id="game" required />
+      <label for="game">好きなゲーム:</label>
+      <input type="text" id="game" required>
 
-      <button type="submit">送信</button>
+      <button type="submit" id="submit-btn">送信</button>
     </form>
-    <p id="status"></p>
+    <div id="message" class="message"></div>
   </div>
 
-  <script src="script.js"></script>
+<script>
+  const form = document.getElementById('form');
+  const messageBox = document.getElementById('message');
+  const submitBtn = document.getElementById('submit-btn');
+  const apiUrl = document.getElementById('api-url').textContent.trim().replace('Target: ', '');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    messageBox.className = 'message';
+    messageBox.textContent = '送信中...';
+    submitBtn.disabled = true;
+
+    const data = {
+      preferred_name: document.getElementById('name').value,
+      favorite_game: document.getElementById('game').value
+    };
+
+    try {
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if(res.ok){
+        messageBox.className = 'message success';
+        messageBox.textContent = `✅ OK (${result.m})`;
+        form.reset();
+      } else {
+        messageBox.className = 'message error';
+        messageBox.textContent = `❌ FAIL (${result.m})`;
+      }
+    } catch (err) {
+      messageBox.className = 'message error';
+      messageBox.textContent = '❌ Network Error';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>
 </body>
 </html>
