@@ -129,3 +129,25 @@ qa(".section-head,.banner-panel,.hero-card,.mechanic-card,.world-board,.timeline
   el.classList.add("reveal");
   observer.observe(el);
 });
+
+
+// Editorial motion: reveal sections with a restrained, accessible entrance.
+(() => {
+  const targets = document.querySelectorAll(
+    ".section-head, .banner-panel, .hero-card, .mechanic-card, .world-board, .timeline-item, .closing-seal"
+  );
+  targets.forEach((el) => el.setAttribute("data-reveal", ""));
+  if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    targets.forEach((el) => el.classList.add("revealed"));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("revealed");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -35px 0px" });
+  targets.forEach((el) => observer.observe(el));
+})();
